@@ -20,7 +20,32 @@ export const loginUser = createAsyncThunk(
     }
   }
 );
-
+export const getStaff = createAsyncThunk(
+  'auth/staff',
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await authService.getStaff(data);
+      return response;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || 'staff fetch failed'
+      );
+    }
+  }
+);
+export const addStaff = createAsyncThunk(
+  'auth/addstaff',
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await authService.addStaff(data);
+      return response;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || 'staff fetch failed'
+      );
+    }
+  }
+);
 export const registerUser = createAsyncThunk(
   'auth/register',
   async (userData, { rejectWithValue }) => {

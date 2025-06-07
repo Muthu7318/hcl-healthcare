@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import {
   Box,
   Container,
@@ -30,18 +31,25 @@ import {
   AccessTime,
   Visibility,
   Edit,
-  Add,
+  Add
 } from '@mui/icons-material';
 import SimpleLayout from './simpleLayout';
+import { getStaff } from '../slices/authSlice';
 
 const Dashboard = () => {
+    const dispatch = useDispatch();
   const [currentTime, setCurrentTime] = useState(new Date());
-
+const [recentAttendance,setrecentAttendance] = useState([])
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
-    return () => clearInterval(timer);
+        dispatch(getStaff()).unwrap().then((res) => {
+            if(res.data){
+            setrecentAttendance(res.data)
+
+            }else{
+            }
+        }).catch((error) => {
+          console.log(error);
+        })
   }, []);
 
   // Enhanced dashboard stats
@@ -86,56 +94,66 @@ const Dashboard = () => {
       bgColor: '#fef2f2',
       description: 'Need attention',
     },
+    {
+      title: 'Staff Availability',
+      value: '124',
+      change: '1',
+      trend: 'up',
+      icon: <Schedule />,
+      color: '#ef4444',
+      bgColor: '#fef2f2',
+      description: 'Need attention',
+    },
   ];
 
   // Recent attendance data
-  const recentAttendance = [
-    {
-      id: 1,
-      name: 'Dr. Sarah Johnson',
-      avatar: '/api/placeholder/32/32',
-      department: 'Cardiology',
-      checkIn: '08:45 AM',
-      status: 'Present',
-      shift: 'Morning',
-    },
-    {
-      id: 2,
-      name: 'Nurse Emily Davis',
-      avatar: '/api/placeholder/32/32',
-      department: 'Emergency',
-      checkIn: '07:00 AM',
-      status: 'Present',
-      shift: 'Morning',
-    },
-    {
-      id: 3,
-      name: 'Dr. Michael Chen',
-      avatar: '/api/placeholder/32/32',
-      department: 'Neurology',
-      checkIn: '09:15 AM',
-      status: 'Late',
-      shift: 'Morning',
-    },
-    {
-      id: 4,
-      name: 'Tech. Lisa Brown',
-      avatar: '/api/placeholder/32/32',
-      department: 'Radiology',
-      checkIn: '-',
-      status: 'Absent',
-      shift: 'Morning',
-    },
-    {
-      id: 5,
-      name: 'Dr. Robert Wilson',
-      avatar: '/api/placeholder/32/32',
-      department: 'Orthopedics',
-      checkIn: '08:30 AM',
-      status: 'Present',
-      shift: 'Morning',
-    },
-  ];
+//   const recentAttendance = [
+//     {
+//       id: 1,
+//       name: 'Dr. Sarah Johnson',
+//       avatar: '/api/placeholder/32/32',
+//       department: 'Cardiology',
+//       checkIn: '08:45 AM',
+//       status: 'Present',
+//       shift: 'Morning',
+//     },
+//     {
+//       id: 2,
+//       name: 'Nurse Emily Davis',
+//       avatar: '/api/placeholder/32/32',
+//       department: 'Emergency',
+//       checkIn: '07:00 AM',
+//       status: 'Present',
+//       shift: 'Morning',
+//     },
+//     {
+//       id: 3,
+//       name: 'Dr. Michael Chen',
+//       avatar: '/api/placeholder/32/32',
+//       department: 'Neurology',
+//       checkIn: '09:15 AM',
+//       status: 'Late',
+//       shift: 'Morning',
+//     },
+//     {
+//       id: 4,
+//       name: 'Tech. Lisa Brown',
+//       avatar: '/api/placeholder/32/32',
+//       department: 'Radiology',
+//       checkIn: '-',
+//       status: 'Absent',
+//       shift: 'Morning',
+//     },
+//     {
+//       id: 5,
+//       name: 'Dr. Robert Wilson',
+//       avatar: '/api/placeholder/32/32',
+//       department: 'Orthopedics',
+//       checkIn: '08:30 AM',
+//       status: 'Present',
+//       shift: 'Morning',
+//     },
+//   ];
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -175,7 +193,7 @@ const Dashboard = () => {
         </Box>
 
         {/* Stats Cards */}
-        <Grid container spacing={3} sx={{ mb: 4 }}>
+        {/* <Grid container spacing={3} sx={{ mb: 4 }}>
           {dashboardStats.map((stat, index) => (
             <Grid item xs={12} sm={6} md={3} key={index}>
               <Card 
@@ -230,11 +248,92 @@ const Dashboard = () => {
               </Card>
             </Grid>
           ))}
-        </Grid>
+        </Grid> */}
+<Box
+  sx={{
+    display: 'flex',
+    gap: 3,
+    overflowX: 'auto',
+    overflowY: 'hidden',
+    mb: 4,
+    pb: 1,
+    '&::-webkit-scrollbar': {
+      height: 6,
+    },
+    '&::-webkit-scrollbar-track': {
+      backgroundColor: '#f1f5f9',
+      borderRadius: 3,
+    },
+    '&::-webkit-scrollbar-thumb': {
+      backgroundColor: '#cbd5e1',
+      borderRadius: 3,
+      '&:hover': {
+        backgroundColor: '#94a3b8',
+      },
+    },
+  }}
+>
+  {dashboardStats.map((stat, index) => (
+    <Card
+      key={index}
+      sx={{
+        minWidth: '180px',
+        maxWidth: '200px',
+        flexShrink: 0,
+        height: 'auto',
+        transition: 'transform 0.2s, box-shadow 0.2s',
+        '&:hover': {
+          transform: 'translateY(-4px)',
+          boxShadow: '0 8px 25px rgba(0,0,0,0.1)',
+        }
+      }}
+    >
+      <CardContent sx={{ p: 3 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+          <Box
+            sx={{
+              width: 48,
+              height: 48,
+              borderRadius: 2,
+              bgcolor: stat.bgColor,
+              color: stat.color,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              mr: 2,
+            }}
+          >
+            {stat.icon}
+          </Box>
+          <Box sx={{ flex: 1 }}>
+            <Typography variant="h4" sx={{ fontWeight: 700, color: '#1e293b', mb: 0.5 }}>
+              {stat.value}
+            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Chip
+                label={stat.change}
+                size="small"
+                color={stat.trend === 'up' ? 'success' : 'error'}
+                icon={stat.trend === 'up' ? <TrendingUp /> : <TrendingDown />}
+                sx={{ fontSize: '0.7rem', height: 20 }}
+              />
+            </Box>
+          </Box>
+        </Box>
+        <Typography variant="h6" sx={{ fontWeight: 600, color: '#1e293b', mb: 0.5 }}>
+          {stat.title}
+        </Typography>
+        <Typography variant="body2" sx={{ color: '#64748b' }}>
+          {stat.description}
+        </Typography>
+      </CardContent>
+    </Card>
+  ))}
+</Box>
 
         <Grid container spacing={3}>
           {/* Recent Attendance */}
-          {/* <Grid item xs={12} lg={8}>
+          <Grid item xs={12} lg={8}>
             <Card>
               <CardContent sx={{ p: 0 }}>
                 <Box sx={{ p: 3, borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -321,7 +420,7 @@ const Dashboard = () => {
                 </TableContainer>
               </CardContent>
             </Card>
-          </Grid> */}
+          </Grid>
         </Grid>
       </Container>
     </SimpleLayout>

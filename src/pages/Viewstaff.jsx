@@ -3,8 +3,11 @@ import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
   TableSortLabel, TablePagination, Paper, TextField, Box, CircularProgress
 } from '@mui/material';
+import { useDispatch } from 'react-redux';
+import { getStaff } from '../slices/authSlice';
 
 export default function EnhancedTable() {
+    const dispatch = useDispatch();
   const [data, setData] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [order, setOrder] = useState('asc');
@@ -15,12 +18,13 @@ export default function EnhancedTable() {
 
   // Fetch data from API
   useEffect(() => {
-    fetch({API_BASE_URL}+'/api/v1/staff/readStaff')
-      .then((res) => res.json())
-      .then((json) => {
-        setData(json);
-        setLoading(false);
-      });
+    dispatch(getStaff()).unwrap().then((res) => {
+      setData(res);
+      setLoading(false);
+    }).catch((error) => {
+      console.log(error);
+    setLoading(false);
+    })
   }, []);
 
   const handleRequestSort = (property) => {

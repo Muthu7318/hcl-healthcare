@@ -4,6 +4,8 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Login from './pages/login';
 import Dashboard from './pages/dashboard';
+import AddStaff from './pages/addStaff';
+import ViewStaff from './pages/Viewstaff';
 
 const theme = createTheme({
   palette: {
@@ -94,7 +96,13 @@ function App() {
                 </ProtectedRoute>
               } 
             />
-            
+            <Route path='/staff'
+            element={
+                <ViewStaff />
+            }/>
+            <Route path='/createstaff'element={
+                <AddStaff />
+            }/>
             <Route path="/" element={<Navigate to="/login" replace />} />
             
             {/* 404 Route */}
