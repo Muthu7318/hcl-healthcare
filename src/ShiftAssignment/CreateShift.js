@@ -4,25 +4,91 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Button from "@mui/material/Button";
+import axios from "axios";
+import { shiftService } from "../services/shiftService";
 
 export const CreateShift = () => {
-  const staffDetails = [
-    { id: 1, name: "John Doe" },
-    { id: 2, name: "Jane Smith" },
-    { id: 3, name: "Alice Johnson" },
-  ];
-  const technicianDetails = [
-    { id: 1, name: "Doctor" },
-    { id: 2, name: "Care Giver" },
-    { id: 3, name: "Care Coordinator" },
-  ];
+  const [allStaffDetails, setAllStaffDetails] = useState([]);
+  const [staffDetails, setStaffDetails] = useState([]);
+  const [technicianDetails, setTechnicianDetails] = useState([]);
+
   const [selectedStaff, setSelectedStaff] = useState("select");
   const [selectedTechnician, setSelectedTechnician] = useState("select");
   const [staffShift, setStaffShift] = useState({});
   const [selectedDate, setSelectedDate] = useState(dayjs());
   const [selectedShift, setSelectedShift] = useState("");
+
+  const createShift = async () => {
+    if (selectedStaff === "select" || selectedTechnician === "select") {
+      alert("Please select both staff and technician.");
+      return;
+    }
+    if (selectedShift === "") {
+      alert("Please select a shift.");
+      return;
+    }
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/api/v1/shifts/createShift",
+        {
+          staffId: selectedStaff,
+          date: selectedDate.format("YYYY-MM-DD"),
+          shift: selectedShift,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      // Here you would typically send the data to your backend
+      if (response.status === 201) {
+        alert("Shift created successfully!");
+      } else {
+        console.log(response);
+      }
+    } catch (error) {
+      console.error("Error creating shift:", error);
+      alert("Shift already exists for this staff on this date.");
+      return;
+    }
+
+    // Reset the form after submission
+    setSelectedStaff("select");
+    setSelectedTechnician("select");
+    setSelectedDate(dayjs());
+    setSelectedShift("");
+  };
+
+  const getUserData = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:8000/api/v1/staff/readStaff"
+      );
+      //   console.log("User data fetched successfully:", response.data);
+
+      if (response.status === 200) {
+        let department = new Set([
+          ...response.data.data.map((staff) => staff.role),
+        ]);
+
+        setTechnicianDetails([...department]);
+        console.log(console.log("Technician Details", [...department]));
+        setAllStaffDetails(response.data.data);
+        setStaffDetails(response.data.data);
+
+        // console.log(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
+  useEffect(() => {
+    getUserData();
+  }, []);
   return (
     <div
       style={{
@@ -42,7 +108,7 @@ export const CreateShift = () => {
           value={selectedDate}
         />
       </LocalizationProvider>
-      <span style={{ marginTop: 20 }}>Select Department</span>
+      {/* <span style={{ marginTop: 20 }}>Select Department</span>
       <Select
         labelId="technician-select-label"
         id="technician-select"
@@ -50,17 +116,27 @@ export const CreateShift = () => {
         // label={"Select Department"}
         onChange={(event) => {
           setSelectedTechnician(event.target.value);
+          setStaffDetails(
+            allStaffDetails.filter((staff) => staff.role === event.target.value)
+          );
+          console.log(
+            allStaffDetails.filter((staff) => staff.role === event.target.value)
+          );
+
+          if (selectedTechnician === "select") {
+            setStaffDetails([]);
+          }
         }}
       >
         <MenuItem key={0} value={"select"}>
           {"Select Department"}
         </MenuItem>
         {technicianDetails.map((techinician) => (
-          <MenuItem key={techinician.id} value={techinician.id}>
-            {techinician.name}
+          <MenuItem key={techinician} value={techinician}>
+            {techinician}
           </MenuItem>
         ))}
-      </Select>
+      </Select> */}
       <span style={{ marginTop: 20 }}>Select Staff</span>
       <Select
         labelId="staff-select-label"
@@ -75,7 +151,7 @@ export const CreateShift = () => {
           {"Select Staff"}
         </MenuItem>
         {staffDetails.map((staff) => (
-          <MenuItem key={staff.id} value={staff.id}>
+          <MenuItem key={staff.staffId} value={staff.staffId}>
             {staff.name}
           </MenuItem>
         ))}
@@ -137,25 +213,13 @@ export const CreateShift = () => {
                 style={{ marginTop: 20 }}
                 disabled={selectedShift === ""}
                 variant="contained"
+                onClick={() => createShift()}
               >
                 Save
               </Button>
             </div>
           </div>
         )}
-
-      {/* <Scheduler data={sampleData} defaultDate={displayDate}>
-        <DayView
-          title="Two-Day-View"
-          numberOfDays={2}
-          slotDuration={60}
-          slotDivisions={2}
-          startTime={"07:00"}
-          endTime={"19:00"}
-          workDayStart={"08:00"}
-          workDayEnd={"18:00"}
-        />
-      </Scheduler> */}
     </div>
   );
 };

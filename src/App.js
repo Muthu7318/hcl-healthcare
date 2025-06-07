@@ -1,24 +1,30 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
-import Login from './pages/login';
+import React from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import Login from "./pages/login";
+import { CreateShift } from "./ShiftAssignment/CreateShift";
 
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#2196F3',
-      dark: '#1976D2',
-      light: '#64B5F6',
+      main: "#2196F3",
+      dark: "#1976D2",
+      light: "#64B5F6",
     },
     secondary: {
-      main: '#4CAF50',
-      dark: '#388E3C',
-      light: '#81C784',
+      main: "#4CAF50",
+      dark: "#388E3C",
+      light: "#81C784",
     },
     background: {
-      default: '#f5f5f5',
-      paper: '#ffffff',
+      default: "#f5f5f5",
+      paper: "#ffffff",
     },
   },
   typography: {
@@ -37,7 +43,7 @@ const theme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
-          textTransform: 'none',
+          textTransform: "none",
           borderRadius: 8,
         },
       },
@@ -45,7 +51,7 @@ const theme = createTheme({
     MuiCard: {
       styleOverrides: {
         root: {
-          boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+          boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
         },
       },
     },
@@ -53,7 +59,7 @@ const theme = createTheme({
 });
 
 const useAuth = () => {
-  const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+  const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
   return { isAuthenticated };
 };
 
@@ -63,17 +69,19 @@ const ProtectedRoute = ({ children }) => {
 };
 
 const NotFound = () => (
-  <div style={{ 
-    display: 'flex', 
-    flexDirection: 'column', 
-    alignItems: 'center', 
-    justifyContent: 'center', 
-    minHeight: '100vh',
-    textAlign: 'center'
-  }}>
+  <div
+    style={{
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      minHeight: "100vh",
+      textAlign: "center",
+    }}
+  >
     <h1>404 - Page Not Found</h1>
     <p>The page you're looking for doesn't exist.</p>
-    <a href="/login" style={{ color: '#2196F3', textDecoration: 'none' }}>
+    <a href="/login" style={{ color: "#2196F3", textDecoration: "none" }}>
       Go to Login
     </a>
   </div>
@@ -86,19 +94,15 @@ function App() {
       <Router>
         <div className="App">
           <Routes>
-            <Route path="/login" element={<Login />} />
-            
-            <Route 
-              path="/dashboard" 
-              element={
-                <ProtectedRoute>
-                  {/* <Dashboard /> */}
-                </ProtectedRoute>
-              } 
+            <Route path="/login" element={<CreateShift />} />
+
+            <Route
+              path="/dashboard"
+              element={<ProtectedRoute>{/* <Dashboard /> */}</ProtectedRoute>}
             />
-            
+
             <Route path="/" element={<Navigate to="/login" replace />} />
-            
+
             {/* 404 Route */}
             <Route path="*" element={<NotFound />} />
           </Routes>
