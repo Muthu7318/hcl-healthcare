@@ -1,6 +1,6 @@
-import logo from "./logo.svg";
 import "./App.css";
 import { CreateShift } from "./ShiftAssignment/CreateShift";
+import { ViewShift } from "./ShiftAssignment/ViewShift";
 
 function App() {
   return <CreateShift />;
