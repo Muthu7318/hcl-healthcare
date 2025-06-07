@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Login from './pages/login';
+import Dashboard from './pages/dashboard';
 
 const theme = createTheme({
   palette: {
@@ -51,7 +52,6 @@ const theme = createTheme({
     },
   },
 });
-
 const useAuth = () => {
   const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
   return { isAuthenticated };
@@ -61,7 +61,6 @@ const ProtectedRoute = ({ children }) => {
   const { isAuthenticated } = useAuth();
   return isAuthenticated ? children : <Navigate to="/login" replace />;
 };
-
 const NotFound = () => (
   <div style={{ 
     display: 'flex', 
@@ -78,7 +77,6 @@ const NotFound = () => (
     </a>
   </div>
 );
-
 function App() {
   return (
     <ThemeProvider theme={theme}>
@@ -92,7 +90,7 @@ function App() {
               path="/dashboard" 
               element={
                 <ProtectedRoute>
-                  {/* <Dashboard /> */}
+                  <Dashboard />
                 </ProtectedRoute>
               } 
             />

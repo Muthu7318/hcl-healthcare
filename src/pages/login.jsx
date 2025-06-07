@@ -123,11 +123,15 @@ const Login = () => {
           password: formData.password
         };
       dispatch(loginUser(credentials)).unwrap().then((data) => {
+        if (data.status==="success") {
          setAlert({
           show: true,
           message: 'Login successful! Redirecting to dashboard...',
           severity: 'success'
         });
+        window.location.href = '/dashboard';
+        }
+      
       }).catch((error) => {
         console.error('Login failed:', error);
         setAlert({
