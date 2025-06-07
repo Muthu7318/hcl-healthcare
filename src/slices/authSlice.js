@@ -7,8 +7,9 @@ export const loginUser = createAsyncThunk(
     try {
       const response = await authService.login(credentials);
       
-      // Store tokens in localStorage
-      localStorage.setItem('accessToken', response.access_token);
+      console.log('Login response:', response);
+      localStorage.setItem('accessToken', response.token);
+      localStorage.setItem('username', response.user);
       localStorage.setItem('isAuthenticated', 'true');
       
       return response;
@@ -90,7 +91,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.isAuthenticated = true;
         state.user = action.payload.user;
-        state.token = action.payload.access_token;
+        state.token = action.payload.token;
         state.error = null;
       })
       .addCase(loginUser.rejected, (state, action) => {

@@ -10,7 +10,15 @@ import axios from "axios";
 import { shiftService } from "../services/shiftService";
 import SimpleLayout from "../pages/simpleLayout";
 
-export const CreateShift = () => {
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
+
+export const ViewAllShiftTable = () => {
   const [allStaffDetails, setAllStaffDetails] = useState([]);
   const [staffDetails, setStaffDetails] = useState([]);
 
@@ -18,24 +26,13 @@ export const CreateShift = () => {
   const [selectedTechnician, setSelectedTechnician] = useState("select");
   const [selectedDate, setSelectedDate] = useState(dayjs());
   const [selectedShift, setSelectedShift] = useState("");
+  const [allShifts, setAllShifts] = useState([]);
 
-  const createShift = async () => {
-    if (selectedStaff === "select") {
-      alert("Please select both staff and technician.");
-      return;
-    }
-    if (selectedShift === "") {
-      alert("Please select a shift.");
-      return;
-    }
+  const getAllShifts = async (userid) => {
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/v1/shifts/createShift",
-        {
-          staffId: selectedStaff,
-          date: selectedDate.format("YYYY-MM-DD"),
-          shift: selectedShift,
-        },
+        "http://localhost:8000/api/v1/shifts/getShiftById",
+        { userid },
         {
           headers: {
             "Content-Type": "application/json",
@@ -43,24 +40,23 @@ export const CreateShift = () => {
           },
         }
       );
-      // Here you would typically send the data to your backend
-      if (response.status === 201) {
-        alert("Shift created successfully!");
-      } else {
-        console.log(response);
+      // console.log("All shifts fetched successfully:", response.data);
+      if (response.status === 200) {
+        setAllShifts(response.data.data);
+        if (response.data.data.length === 0) {
+          alert("No shifts found for the selected staff.");
+        }
+        console.log("All Shifts", response.data.data);
+
+        // console.log("All Shifts", response.data.data);
       }
     } catch (error) {
-      console.error("Error creating shift:", error);
-      alert("Shift already exists for this staff on this date.");
-      return;
+      console.error("Error fetching all shifts:", error);
     }
-
-    // Reset the form after submission
-    setSelectedStaff("select");
-    setSelectedTechnician("select");
-    setSelectedDate(dayjs());
-    setSelectedShift("");
   };
+  useEffect(() => {
+    // getAllShifts("");
+  }, []);
 
   const getUserData = async () => {
     try {
@@ -76,10 +72,6 @@ export const CreateShift = () => {
       //   console.log("User data fetched successfully:", response.data);
 
       if (response.status === 200) {
-        let department = new Set([
-          ...response.data.data.map((staff) => staff.role),
-        ]);
-
         // setTechnicianDetails([...department]);
         // console.log(console.log("Technician Details", [...department]));
         setAllStaffDetails(response.data.data);
@@ -152,6 +144,7 @@ export const CreateShift = () => {
           // label="Select Staff"
           onChange={(event) => {
             setSelectedStaff(event.target.value);
+            getAllShifts(event.target.value);
           }}
         >
           <MenuItem key={0} value={"select"}>
@@ -164,67 +157,31 @@ export const CreateShift = () => {
           ))}
         </Select>
 
-        {selectedStaff !== "select" && selectedDate !== "" && (
-          <div
-            style={{
-              textAlign: "center",
-              justifyItems: "center",
-              marginTop: 20,
-            }}
-          >
-            <span>Available Slots</span>
-            <div
-              style={{
-                width: "300px",
-                // backgroundColor: "red",
-                alignItems: "center",
-                marginTop: 20,
-              }}
-            >
-              <div
-                style={{
-                  height: 100,
-                  border: "1px solid black",
-                  backgroundColor: selectedShift === "Morning" ? "#f58c84" : "",
-                  //   backgroundColor: "blue",
-                  //   width: "280px",
-                }}
-                onClick={() => setSelectedShift("Morning")}
-              >
-                <span>Morning</span>
-              </div>
-              <div
-                style={{
-                  height: 100,
-                  border: "1px solid black",
-                  backgroundColor:
-                    selectedShift === "Afternoon" ? "#f58c84" : "",
-                }}
-                onClick={() => setSelectedShift("Afternoon")}
-              >
-                <span>Afternoon</span>
-              </div>
-              <div
-                style={{
-                  height: 100,
-                  border: "1px solid black",
-                  backgroundColor: selectedShift === "Night" ? "#f58c84" : "",
-                }}
-                onClick={() => setSelectedShift("Night")}
-              >
-                <span>Night</span>
-              </div>
-              <Button
-                style={{ marginTop: 20 }}
-                disabled={selectedShift === ""}
-                variant="contained"
-                onClick={() => createShift()}
-              >
-                Save
-              </Button>
-            </div>
-          </div>
-        )}
+        <TableContainer component={Paper} style={{ marginTop: 20 }}>
+          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <TableHead>
+              <TableRow>
+                <TableCell>Staff</TableCell>
+                <TableCell align="right">Shift</TableCell>
+                <TableCell align="right">Date</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {allShifts.map((row) => (
+                <TableRow
+                  key={row._id}
+                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                >
+                  <TableCell component="th" scope="row">
+                    {row.staffId}
+                  </TableCell>
+                  <TableCell align="right">{row.shift}</TableCell>
+                  <TableCell align="right">{row.date}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </div>
     </SimpleLayout>
   );

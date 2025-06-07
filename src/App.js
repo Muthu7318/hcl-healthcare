@@ -9,6 +9,8 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Login from "./pages/login";
 import { CreateShift } from "./ShiftAssignment/CreateShift";
+import Dashboard from "./pages/dashboard";
+import { ViewAllShiftTable } from "./ShiftAssignment/ViewShiftTable";
 
 const theme = createTheme({
   palette: {
@@ -57,7 +59,6 @@ const theme = createTheme({
     },
   },
 });
-
 const useAuth = () => {
   const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
   return { isAuthenticated };
@@ -67,7 +68,6 @@ const ProtectedRoute = ({ children }) => {
   const { isAuthenticated } = useAuth();
   return isAuthenticated ? children : <Navigate to="/login" replace />;
 };
-
 const NotFound = () => (
   <div
     style={{
@@ -86,7 +86,6 @@ const NotFound = () => (
     </a>
   </div>
 );
-
 function App() {
   return (
     <ThemeProvider theme={theme}>
@@ -94,11 +93,32 @@ function App() {
       <Router>
         <div className="App">
           <Routes>
-            <Route path="/login" element={<CreateShift />} />
+            <Route path="/login" element={<Login />} />
 
             <Route
               path="/dashboard"
-              element={<ProtectedRoute>{/* <Dashboard /> */}</ProtectedRoute>}
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/scheduler"
+              element={
+                <ProtectedRoute>
+                  <CreateShift />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/viewSifts"
+              element={
+                <ProtectedRoute>
+                  <ViewAllShiftTable />
+                </ProtectedRoute>
+              }
             />
 
             <Route path="/" element={<Navigate to="/login" replace />} />
