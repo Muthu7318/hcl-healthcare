@@ -12,6 +12,9 @@ import { CreateShift } from "./ShiftAssignment/CreateShift";
 import Dashboard from "./pages/dashboard";
 import { ViewAllShiftTable } from "./ShiftAssignment/ViewShiftTable";
 
+import AddStaff from "./pages/addStaff";
+import ViewStaff from "./pages/Viewstaff";
+
 const theme = createTheme({
   palette: {
     primary: {
@@ -121,6 +124,8 @@ function App() {
               }
             />
 
+            <Route path="/staff" element={<ViewStaff />} />
+            <Route path="/createstaff" element={<AddStaff />} />
             <Route path="/" element={<Navigate to="/login" replace />} />
 
             {/* 404 Route */}

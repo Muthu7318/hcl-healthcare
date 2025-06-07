@@ -12,7 +12,14 @@ export const authService = {
     const response = await api.post("/auth/register", userData);
     return response.data;
   },
-
+  getStaff: async (data) => {
+    const response = await api.post('/v1/staff/readStaff', data);
+    return response.data;
+  },
+    addStaff: async (data) => {
+    const response = await api.post('/v1/staff/addStaff', data);
+    return response.data;
+  },
   // Logout
   logout: async () => {
     const response = await api.post("/auth/logout");

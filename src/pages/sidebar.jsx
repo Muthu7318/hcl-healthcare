@@ -96,6 +96,12 @@ const Sidebar = ({ open, onClose, variant = 'temporary' }) => {
           description: 'Check staff availability'
         },
         { 
+          title: 'Add Staff', 
+          icon: <People />, 
+          path: '/createstaff',
+          description: 'create staff'
+        },
+        { 
           title: 'Shift Scheduler', 
           icon: <Assignment />, 
           path: '/scheduler',
@@ -110,7 +116,7 @@ const Sidebar = ({ open, onClose, variant = 'temporary' }) => {
         { 
           title: 'Mark ttendance', 
           icon: <EventNote />, 
-          path: '/attendance',
+          path: '/dashboard',
           description: 'Manual attendance entry'
         },
        { 

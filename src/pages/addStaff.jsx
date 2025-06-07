@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { FormControl, InputLabel, Select, MenuItem, TextField, Button, Box } from '@mui/material';
+import { addStaff } from '../slices/authSlice';
 
 const AddStaff=()=> {
+    const dispatch = useDispatch();
     const [form,setForm] = useState({
        name: '',
        staffId: '',
@@ -21,13 +24,7 @@ const AddStaff=()=> {
     const handleSubmit = async (e) => {
         e.preventDefault();
       try {
-            const response = await fetch({API_BASE_URL}+"/api/v1/staff/readStaff", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(form), // your form state
-            });
+            const response = dispatch(addStaff(form));
 
             const result = await response.json();
             console.log("Server response:", result);
@@ -101,6 +98,15 @@ const AddStaff=()=> {
         label="Contact Number"
         name="contactNumber"
         value={form.contactNumber}
+        onChange={handleChange}
+        fullWidth
+        margin="normal"
+        type="number"
+      />
+        <TextField
+        label="Emergency Contact Number"
+        name="emergencyContactNumber"
+        value={form.emergencyContactNumber}
         onChange={handleChange}
         fullWidth
         margin="normal"
